@@ -13,4 +13,4 @@ parserOptions:
 plugins:
   - "@typescript-eslint"
 rules: { "@typescript-eslint/no-unused-vars": 2 }
-ignorePatterns: [".github/**/*", "dist/**/*", ".vscode/**/*"]
+ignorePatterns: [".github/**/*", "dist/**/*"]

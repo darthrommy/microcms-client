@@ -1,4 +1,4 @@
-name: automatially lint
+name: Lintbot
 
 on:
   push:

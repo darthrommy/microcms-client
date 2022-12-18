@@ -2,12 +2,11 @@ name: Lintbot
 
 on:
   push:
-    branches:
-      - "!master"
-      - "!staging"
+    branches-ignore:
+      - master
   pull_request:
-    branches:
-      - staging
+    branches-ignore:
+      - master
 
 jobs:
   lint:

@@ -28,4 +28,5 @@ jobs:
         uses: wearerequired/lint-action@v2
         with:
           eslint: true
-          eslint_args: "\"src/*\""
+          eslint_extensions: ts
+          eslint_dir: src/

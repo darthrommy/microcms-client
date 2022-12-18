@@ -18,11 +18,7 @@
   "files": [
     "package.json",
     "README.md",
-    "tsconfig.json",
-    ".eslintrc.js",
-    ".gitignore",
     "dist",
-    "rollup.config.mjs",
     "LICENSE"
   ],
   "sideEffects": false,
@@ -31,7 +27,8 @@
     "precleanup": "npm run lint",
     "cleanup": "rimraf dist",
     "prebuild": "npm run cleanup",
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",

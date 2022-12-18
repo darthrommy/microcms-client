@@ -2,9 +2,36 @@
   "name": "@darthrommy/microcms-client",
   "version": "0.0.1",
   "description": "Unofficial microCMS client with type-safety.",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "types": "./dist/index.d.ts",
+      "module": "./dist/esm/index.mjs",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "package.json",
+    "README.md",
+    "tsconfig.json",
+    ".eslintrc.js",
+    ".gitignore",
+    "dist",
+    "rollup.config.mjs",
+    "LICENSE"
+  ],
+  "sideEffects": false,
   "scripts": {
-    "lint": "eslint src/*"
+    "lint": "eslint src/*",
+    "precleanup": "npm run lint",
+    "cleanup": "rimraf dist",
+    "prebuild": "npm run cleanup",
+    "build": "rollup -c"
   },
   "repository": {
     "type": "git",
@@ -17,10 +44,15 @@
   },
   "homepage": "https://github.com/darthrommy/microcms-client#readme",
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@types/node": "^18.11.17",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
     "@typescript-eslint/parser": "^5.46.1",
     "eslint": "^8.30.0",
+    "rimraf": "^3.0.2",
     "rollup": "^3.7.5",
+    "rollup-plugin-esbuild": "^5.0.0",
+    "rollup-plugin-ts": "^3.0.2",
     "typescript": "^4.9.4"
   }
 }

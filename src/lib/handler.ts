@@ -30,7 +30,7 @@ type FetchHandler = (
         }
       | {
           method: "POST" | "PUT";
-          body: object;
+          body: any;
           queries?: object;
         }
       | {

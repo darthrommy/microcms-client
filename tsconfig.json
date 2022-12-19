@@ -4,7 +4,6 @@
     "module": "esnext",
     "moduleResolution": "node",
     "outDir": "./dist",
-    "removeComments": true,
     "strictFunctionTypes": true,
     "strict": true
   },

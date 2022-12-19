@@ -1,33 +1,13 @@
-import { Fetch, KV } from "./type-utils";
+import { DecrementNum, Fetch, KV } from "./type-utils";
 
 export type DepthNumber = 1 | 2 | 3;
 
-/**
- * microCMS queries
- */
-export interface MCQueries<T extends KV> {
-  draftKey?: string;
-  limit?: number;
-  offset?: number;
-  orders?: string;
-  fields?: Extract<keyof T, string>[];
-  q?: string;
-  depth?: DepthNumber;
-  ids?: string | string[];
-  filters?: string;
-  richEditorFormat?: "html" | "object";
-}
-
-/**
- * microCMS contentId
- */
+/** microCMS contentId */
 export type MCContentId = {
   id: string;
 };
 
-/**
- * microCMS content common date
- */
+/** microCMS content common date */
 export type MCDate = {
   createdAt: string;
   updatedAt: string;
@@ -35,72 +15,217 @@ export type MCDate = {
   revisedAt?: string;
 };
 
+/** microCMS default list response type */
 export type MCListBase = MCContentId & MCDate;
 
+/** microCMS default object response type */
 export type MCObjectBase = MCDate;
 
-/* ---------------------------------------------- */
+/** An adapted relation fields. Use this when defining recursive fields. */
+export type MCRelation<T> = T & MCListBase;
 
-export type MCClient = (args: {
-  serviceDomain: string;
-  apiKey: string;
-  customFetch?: Fetch;
-}) => {
-  getList: <T extends KV>(
-    request: GetListRequest<T>
-  ) => Promise<MCListResponse<T>>;
-  getListItem: <T extends KV>(
-    request: GetListItemRequest<T>
-  ) => Promise<T & MCListBase>;
-  getObject: <T extends KV>(
-    request: GetObjectRequest<T>
-  ) => Promise<T & MCListBase>;
-  create: <T extends KV>(request: CreateRequest<T>) => Promise<WriteResponse>;
-  update: <T extends KV>(request: UpdateRequest<T>) => Promise<WriteResponse>;
-  delete: (request: DeleteRequest) => Promise<void>;
+// ! WRITE APIS
+
+export type ResolveUpsertRelation<T> = {
+  [K in keyof T]: T[K] extends infer Props
+    ? Props extends MCRelation<unknown>
+      ? string
+      : Props extends MCRelation<unknown>[]
+      ? string[]
+      : Props
+    : never;
 };
 
-export type MCListResponse<T extends KV> = {
-  contents: (T & MCListBase)[];
-  totalCount: number;
-  limit: number;
-  offset: number;
-};
+// * CREATE API
 
-export type GetListRequest<T extends KV> = {
-  endpoint: string;
-  queries?: MCQueries<T & MCListBase>;
-};
+/** `create` request type */
+export interface CreateRequest<Endpoint extends ClientEndpoints> {
+  endpoint: Extract<keyof Endpoint["list"], string>;
+  contentId?: string;
+  content: ResolveUpsertRelation<Endpoint["list"][this["endpoint"]]>;
+  isDraft?: boolean;
+}
 
-export type GetListItemRequest<T extends KV> = {
-  endpoint: string;
+// * UPDATE LIST API
+
+/** `update` list request type */
+export interface UpdateListRequest<Endpoint extends ClientEndpoints> {
+  endpoint: Extract<keyof Endpoint["list"], string>;
   contentId: string;
-  queries?: MCQueries<T & MCListBase>;
-};
+  content: Partial<Endpoint["list"][this["endpoint"]]>;
+}
 
-export type GetObjectRequest<T extends KV> = {
-  endpoint: string;
-  queries?: MCQueries<T>;
+// * UPDATE OBJECT API
+
+/** `udpate` object request type */
+export interface UpdateObjectRequest<Endpoint extends ClientEndpoints> {
+  endpoint: Extract<keyof Endpoint["list"], string>;
+  contentId: string;
+  content: Partial<Endpoint["object"][this["endpoint"]]>;
+}
+
+/** `update` request type */
+export type UpdateRequest<Endpoint extends ClientEndpoints> =
+  | UpdateListRequest<Endpoint>
+  | UpdateObjectRequest<Endpoint>;
+
+// * DELETE API
+
+/** `delete` request type */
+export type DeleteRequest<Endpoints extends ClientEndpoints> = {
+  endpoint: Extract<
+    keyof Endpoints["list"] | keyof Endpoints["object"],
+    string
+  >;
+  contentId: string;
 };
 
 export type WriteResponse = {
   id: string;
 };
 
-export type CreateRequest<T extends KV> = {
-  endpoint: string;
-  contentId?: string;
-  content: T;
-  isDraft?: boolean;
+// ! GET APIS
+
+export type ResolveDepthResponse<T, Depth extends number = 1> = MCListBase & {
+  [K in keyof T]: T[K] extends infer Props
+    ? Props extends MCRelation<infer Child>
+      ? Depth extends 0
+        ? MCContentId
+        : ResolveDepthResponse<Child, DecrementNum<Depth>>
+      : Props extends MCRelation<infer Child>[]
+      ? Depth extends 0
+        ? MCContentId[]
+        : ResolveDepthResponse<Child, DecrementNum<Depth>>[]
+      : Props
+    : never;
 };
 
-export type UpdateRequest<T extends KV> = {
-  endpoint: string;
-  contentId: string;
-  content: Partial<T>;
+export type ResolveDepthQuery<Request, Content> = Request extends {
+  queries: {
+    depth: infer Depth extends DepthNumber;
+  };
+}
+  ? ResolveDepthResponse<Content, Depth>
+  : ResolveDepthResponse<Content>;
+
+export type ResolveContentType<
+  Endpoints extends ClientEndpoints,
+  Kind extends keyof ClientEndpoints,
+  Request extends { endpoint: keyof Endpoints[Kind] },
+  ContentType = Endpoints[Kind][Request["endpoint"]] &
+    (Kind extends "list" ? MCListBase : MCObjectBase)
+> = Request extends {
+  queries: {
+    fields: (infer Fields extends keyof ContentType)[];
+  };
+}
+  ? ResolveDepthQuery<Request, Pick<ContentType, Fields>>
+  : ResolveDepthQuery<Request, ContentType>;
+
+// * GET LIST API
+
+/** `getList` queries type */
+export type MCGetListQueries<E> = {
+  draftKey?: string;
+  limit?: number;
+  offset?: number;
+  orders?: string;
+  fields?: Extract<keyof E | keyof MCListBase, string>[];
+  q?: string;
+  depth?: DepthNumber;
+  ids?: string | string[];
+  filters?: string;
+  richEditorFormat?: "html" | "object";
 };
 
-export type DeleteRequest = {
-  endpoint: string;
+/** `getList` request type */
+export interface MCGetListRequest<Endpoints extends ClientEndpoints> {
+  endpoint: Extract<keyof Endpoints["list"], string>;
+  queries?: MCGetListQueries<Endpoints["list"][this["endpoint"]]>;
+}
+
+/** `getList` response type */
+export interface MCGetListResponse<
+  Endpoints extends ClientEndpoints,
+  Request extends MCGetListRequest<Endpoints>
+> {
+  contents: ResolveContentType<Endpoints, "list", Request>[];
+  totalCount: number;
+  limit: number;
+  offset: number;
+}
+
+// * GET LIST ITEM API
+
+/** `getListItem` queries type */
+export type MCGetListItemQueries<ContentType> = {
+  draftKey?: string;
+  fields?: Extract<keyof ContentType | keyof MCListBase, string>[];
+  depth?: DepthNumber;
+  richEditorFormat?: "html" | "object";
+};
+
+/** `getListItem` request type */
+export interface MCGetListItemRequest<Endpoints extends ClientEndpoints> {
+  endpoint: Extract<keyof Endpoints["list"], string>;
   contentId: string;
+  queries?: MCGetListItemQueries<Endpoints["list"][this["endpoint"]]>;
+}
+
+/** `getListItem` response type */
+export type MCGetListItemResponse<
+  Endpoints extends ClientEndpoints,
+  Request extends MCGetListItemRequest<Endpoints>
+> = ResolveContentType<Endpoints, "list", Request>;
+
+// * GET OBJECT API
+
+/** `getObject` queries type */
+export type MCGetObjectQueries<ContentType> = {
+  draftKey?: string;
+  fields?: Extract<keyof ContentType | keyof MCObjectBase, string>[];
+  depth?: DepthNumber;
+  richEditorFormat?: "html" | "object";
+};
+
+/** `getObject` request type */
+export interface MCGetObjectRequest<Endpoints extends ClientEndpoints> {
+  endpoint: Extract<keyof Endpoints["object"], string>;
+  queries?: MCGetObjectQueries<Endpoints["object"][this["endpoint"]]>;
+}
+
+/** `getObject` response type. */
+export type MCGetObjectResponse<
+  Endpoints extends ClientEndpoints,
+  Request extends MCGetObjectRequest<Endpoints>
+> = ResolveContentType<Endpoints, "object", Request>;
+
+// ! CLIENT
+
+/** A template type to define types of each endpoints. See https://github.com/tsuki-lab/microcms-ts-sdk#type-safe-usage */
+export type ClientEndpoints = {
+  list?: KV;
+  object?: KV;
+};
+
+/** a `createClient` type */
+export type MCClient = <Endpoints extends ClientEndpoints>(args: {
+  serviceDomain: string;
+  apiKey: string;
+  customFetch?: Fetch;
+}) => {
+  getList: <Request extends MCGetListRequest<Endpoints>>(
+    request: Request
+  ) => Promise<MCGetListResponse<Endpoints, Request>>;
+  getListItem: <Request extends MCGetListItemRequest<Endpoints>>(
+    request: Request
+  ) => Promise<MCGetListItemResponse<Endpoints, Request>>;
+  getObject: <Request extends MCGetObjectRequest<Endpoints>>(
+    request: Request
+  ) => Promise<MCGetObjectResponse<Endpoints, Request>>;
+  create: <T extends KV>(request: CreateRequest<T>) => Promise<WriteResponse>;
+  update: <T extends KV>(request: UpdateRequest<T>) => Promise<WriteResponse>;
+  delete: <Request extends DeleteRequest<Endpoints>>(
+    request: Request
+  ) => Promise<void>;
 };

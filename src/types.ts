@@ -61,7 +61,7 @@ export type MCClient = (args: {
 };
 
 export type MCListResponse<T extends KV> = {
-  contents: (T & MCContentId)[];
+  contents: (T & MCListBase)[];
   totalCount: number;
   limit: number;
   offset: number;

@@ -25,7 +25,6 @@ function createESMConfig(input, output) {
       esbuild({
         target: "esnext",
         tsconfig: path.resolve("./tsconfig.json"),
-        minify: true,
       }),
     ],
   });

@@ -1,7 +1,5 @@
 export type KV = Record<string, unknown>;
 
-export type ArrayType<T extends any[]> = T extends (infer U)[] ? U : never;
-
 type DeleteOneItem<Array extends any[]> = Array extends [any, ...infer Rest]
   ? Rest
   : never;

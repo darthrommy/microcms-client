@@ -86,8 +86,8 @@ export type WriteResponse = {
 
 // ! GET APIS
 
-export type ResolveDepthResponse<T, Depth extends number = 1> = MCListBase & {
-  [K in keyof T]: T[K] extends infer Props
+export type ResolveDepthResponse<ContentType, Depth extends number = 1> = {
+  [K in keyof ContentType]: ContentType[K] extends infer Props
     ? Props extends MCRelation<infer Child>
       ? Depth extends 0
         ? MCContentId

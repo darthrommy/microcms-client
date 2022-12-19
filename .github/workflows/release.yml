@@ -22,3 +22,14 @@ jobs:
           tag: ${{ github.event.pull_request.title }}
           body: ${{ github.event.pull_request.body }}
           commit: master
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: "https://registry.npmjs.org"
+          scope: "@darthrommy"
+          always-auth: true
+      - run: npm ci
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

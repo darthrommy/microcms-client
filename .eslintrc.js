@@ -12,7 +12,17 @@ module.exports = {
     sourceType: "module",
   },
   plugins: ["@typescript-eslint"],
-  rules: { "@typescript-eslint/no-unused-vars": 2 },
+  rules: {
+    "@typescript-eslint/no-unused-vars": [
+      2,
+      {
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: "^_",
+      },
+    ],
+    "@typescript-eslint/no-explicit-any": 0,
+  },
   ignorePatterns: [".github/**/*", "dist/**/*", ".eslintrc.js"],
   root: true,
 };

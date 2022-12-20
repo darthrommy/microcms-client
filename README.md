@@ -32,8 +32,6 @@ type ResolveDepthResponse<T, Depth extends number = 1> = MicroCMSListContent & {
 };
 ```
 
-I really respect sir [tsuki-lab](https://github.com/tsuki-lab) who wrote this beautiful type.
-
 However, there is one point that I do not like.
 
 ```ts
@@ -71,16 +69,4 @@ So I modified this type to:
 ```diff
 + type ResolveDepthResponse<ContentType, Depth extends number = 1> = {
 - type ResolveDepthResponse<T, Depth extends number = 1> = MicroCMSListContent & {
-    [K in keyof ContentType]: ContentType[K] extends infer Props
-      ? Props extends MCRelation<infer Child>
-        ? Depth extends 0
-          ? MCContentId
-          : ResolveDepthResponse<Child, DecrementNum<Depth>>
-        : Props extends MCRelation<infer Child>[]
-        ? Depth extends 0
-          ? MCContentId[]
-          : ResolveDepthResponse<Child, DecrementNum<Depth>>[]
-        : Props
-     : never;
-};
 ```

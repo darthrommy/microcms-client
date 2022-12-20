@@ -34,8 +34,10 @@ type FetchHandler = (
     )
 ) => Promise<any>;
 
-const thrower = async (res: Response) => {
-  if (!res.ok) {
+const responseHandler = async (res: Response) => {
+  if (res.ok) {
+    return await res.json();
+  } else {
     const body = await res.json();
     throw new Error(
       `MicroCMS fetch API Error\n  ${res.status}: ${body["message"]}`
@@ -57,8 +59,7 @@ export const fetchHandler: FetchHandler = async props => {
         { method, headers },
         customFetch
       );
-      await thrower(res);
-      return await res.json();
+      return await responseHandler(res);
     }
     case "POST": {
       const stringified = parser(props.queries ?? {});
@@ -71,8 +72,7 @@ export const fetchHandler: FetchHandler = async props => {
         },
         customFetch
       );
-      await thrower(res);
-      return await res.json();
+      return await responseHandler(res);
     }
     case "PUT": {
       const stringified = parser(props.queries ?? {});
@@ -85,8 +85,7 @@ export const fetchHandler: FetchHandler = async props => {
         },
         customFetch
       );
-      await thrower(res);
-      return await res.json();
+      return await responseHandler(res);
     }
     case "PATCH": {
       const res = await fetcher(
@@ -98,8 +97,7 @@ export const fetchHandler: FetchHandler = async props => {
         },
         customFetch
       );
-      await thrower(res);
-      return await res.json();
+      return await responseHandler(res);
     }
     case "DELETE": {
       const stringified = parser(props.queries ?? {});
@@ -108,8 +106,7 @@ export const fetchHandler: FetchHandler = async props => {
         { method, headers },
         customFetch
       );
-      await thrower(res);
-      return;
+      return await responseHandler(res);
     }
   }
 };

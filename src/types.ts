@@ -1,5 +1,7 @@
 import { DecrementNum, Fetch, KV } from "./type-utils";
 
+// ! BASE TYPES
+
 export type DepthNumber = 1 | 2 | 3;
 
 /** microCMS contentId */
@@ -39,7 +41,7 @@ export type ResolveUpsertRelation<T> = {
 // * CREATE API
 
 /** `create` request type */
-export interface CreateRequest<Endpoint extends ClientEndpoints> {
+export interface MCCreateRequest<Endpoint extends ClientEndpoints> {
   endpoint: Extract<keyof Endpoint["list"], string>;
   contentId?: string;
   content: ResolveUpsertRelation<Endpoint["list"][this["endpoint"]]>;
@@ -49,7 +51,7 @@ export interface CreateRequest<Endpoint extends ClientEndpoints> {
 // * UPDATE LIST API
 
 /** `update` list request type */
-export interface UpdateListRequest<Endpoint extends ClientEndpoints> {
+export interface MCUpdateListRequest<Endpoint extends ClientEndpoints> {
   endpoint: Extract<keyof Endpoint["list"], string>;
   contentId: string;
   content: Partial<Endpoint["list"][this["endpoint"]]>;
@@ -58,21 +60,21 @@ export interface UpdateListRequest<Endpoint extends ClientEndpoints> {
 // * UPDATE OBJECT API
 
 /** `udpate` object request type */
-export interface UpdateObjectRequest<Endpoint extends ClientEndpoints> {
+export interface MCUpdateObjectRequest<Endpoint extends ClientEndpoints> {
   endpoint: Extract<keyof Endpoint["list"], string>;
   contentId: string;
   content: Partial<Endpoint["object"][this["endpoint"]]>;
 }
 
 /** `update` request type */
-export type UpdateRequest<Endpoint extends ClientEndpoints> =
-  | UpdateListRequest<Endpoint>
-  | UpdateObjectRequest<Endpoint>;
+export type MCUpdateRequest<Endpoint extends ClientEndpoints> =
+  | MCUpdateListRequest<Endpoint>
+  | MCUpdateObjectRequest<Endpoint>;
 
 // * DELETE API
 
 /** `delete` request type */
-export type DeleteRequest<Endpoints extends ClientEndpoints> = {
+export type MCDeleteRequest<Endpoints extends ClientEndpoints> = {
   endpoint: Extract<
     keyof Endpoints["list"] | keyof Endpoints["object"],
     string
@@ -223,9 +225,13 @@ export type MCClient = <Endpoints extends ClientEndpoints>(args: {
   getObject: <Request extends MCGetObjectRequest<Endpoints>>(
     request: Request
   ) => Promise<MCGetObjectResponse<Endpoints, Request>>;
-  create: <T extends KV>(request: CreateRequest<T>) => Promise<WriteResponse>;
-  update: <T extends KV>(request: UpdateRequest<T>) => Promise<WriteResponse>;
-  delete: <Request extends DeleteRequest<Endpoints>>(
+  create: <Request extends MCCreateRequest<Endpoints>>(
+    request: Request
+  ) => Promise<WriteResponse>;
+  update: <Request extends MCUpdateRequest<Endpoints>>(
+    request: Request
+  ) => Promise<WriteResponse>;
+  delete: <Request extends MCDeleteRequest<Endpoints>>(
     request: Request
   ) => Promise<void>;
 };

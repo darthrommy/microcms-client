@@ -1,4 +1,4 @@
-import { API_VERSION, BASE_DOMAIN } from "./lib/static";
+import { API_VERSION, BASE_DOMAIN, BASE_MNG_DOMAIN } from "./lib/static";
 import { MCClient } from "./types";
 import { fetchHandler } from "./lib/handler";
 
@@ -8,6 +8,7 @@ export const createClient: MCClient = ({
   customFetch,
 }) => {
   const baseUrl = `https://${serviceDomain}.${BASE_DOMAIN}/api/${API_VERSION}`;
+  const baseMngUrl = `https://${serviceDomain}.${BASE_MNG_DOMAIN}/api/${API_VERSION}`;
   return {
     getList: req => {
       return fetchHandler({
@@ -43,7 +44,7 @@ export const createClient: MCClient = ({
         }`,
         method: req.contentId ? "PUT" : "POST",
         body: req.content,
-        queries: req.isDraft ? { draft: true } : {},
+        queries: req.isDraft ? { status: "draft" } : {},
         apiKey,
         customFetch,
       });
@@ -61,6 +62,48 @@ export const createClient: MCClient = ({
       return fetchHandler({
         url: `${baseUrl}/${req.endpoint}/${req.contentId}`,
         method: "DELETE",
+        apiKey,
+        customFetch,
+      });
+    },
+    unstable_getListMeta: req => {
+      return fetchHandler({
+        url: `${baseMngUrl}/contents/${req.endpoint}`,
+        method: "GET",
+        apiKey,
+        customFetch,
+      });
+    },
+    unstable_getListItemMeta: req => {
+      return fetchHandler({
+        url: `${baseMngUrl}/contents/${req.endpoint}/${req.contentId}`,
+        method: "GET",
+        apiKey,
+        customFetch,
+      });
+    },
+    unstable_getObjectMeta: req => {
+      return fetchHandler({
+        url: `${baseMngUrl}/contents/${req.endpoint}`,
+        method: "GET",
+        apiKey,
+        customFetch,
+      });
+    },
+    unstable_updateStatus: req => {
+      return fetchHandler({
+        url: `${baseMngUrl}/contents/${req.endpoint}/${req.contentId}`,
+        method: "PATCH",
+        body: { status: req.status },
+        apiKey,
+        customFetch,
+      });
+    },
+    unstable_getMedia: req => {
+      return fetchHandler({
+        url: `${baseMngUrl}/media`,
+        method: "GET",
+        queries: req,
         apiKey,
         customFetch,
       });

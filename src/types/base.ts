@@ -62,7 +62,7 @@ export type MCImage = {
   url: string;
   width?: number;
   height?: number;
-};
+} & MCContentId;
 
 /** An adapted relation fields. Use this when defining recursive fields. */
 export type MCRelation<T> = T & MCListItemBase;

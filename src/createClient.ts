@@ -102,7 +102,7 @@ export const createClient: MCClient = ({
       return fetchHandler({
         url: `${baseUrl}/media`,
         method: "GET",
-        queries: req.quries,
+        queries: req.queries,
         apiKey,
         customFetch,
       });

@@ -46,7 +46,7 @@ export type MCUpdateStatusRequest<Endpoint extends ClientEndpoints> = {
 
 /** `getMedia` request type */
 export type MCGetMediaRequest = {
-  quries?: {
+  queries?: {
     limit?: number;
     offset?: number;
     imageOnly?: true;

@@ -1,3 +1,5 @@
+import { KV } from "./utils";
+
 export type Fetch = typeof fetch;
 
 export type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -18,10 +20,55 @@ export type MCDate = {
 };
 
 /** microCMS default list response type */
-export type MCListBase = MCContentId & MCDate;
+export type MCListItemBase = MCContentId & MCDate;
 
 /** microCMS default object response type */
 export type MCObjectBase = MCDate;
 
+export type MCListResponseBase = {
+  totalCount: number;
+  limit: number;
+  offset: number;
+};
+
+export type MCContentStatus = "DRAFT" | "PUBLISH" | "CLOSED";
+
+export type MCCustomStatus = {
+  key: string;
+  description: string;
+  name: string;
+  behavior: MCContentStatus;
+  color: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+/** microCMS management API response type */
+export type MCMeta = {
+  closedAt?: string;
+  status: MCContentStatus[];
+  customStatus?: MCCustomStatus[];
+  draftKey?: string;
+  createdBy: string;
+  updatedBy: string;
+  reservationTime?: {
+    publishTime?: string;
+    stopTime?: string;
+  };
+} & MCListItemBase;
+
+/** microCMS image type */
+export type MCImage = {
+  url: string;
+  width?: number;
+  height?: number;
+};
+
 /** An adapted relation fields. Use this when defining recursive fields. */
-export type MCRelation<T> = T & MCListBase;
+export type MCRelation<T> = T & MCListItemBase;
+
+/** A template type to define types of each endpoints. See https://github.com/tsuki-lab/microcms-ts-sdk#type-safe-usage */
+export type ClientEndpoints = {
+  list?: KV;
+  object?: KV;
+};

@@ -1,12 +1,13 @@
-import { DecrementNum } from "./utils";
 import {
+  ClientEndpoints,
   DepthNumber,
   MCContentId,
-  MCListBase,
+  MCListItemBase,
+  MCListResponseBase,
   MCObjectBase,
   MCRelation,
 } from "./base";
-import { ClientEndpoints } from "./client";
+import { DecrementNum } from "./utils";
 
 export type ResolveUpsertRelation<T> = {
   [K in keyof T]: T[K] extends infer Props
@@ -18,8 +19,6 @@ export type ResolveUpsertRelation<T> = {
     : never;
 };
 
-// * CREATE API
-
 /** `create` request type */
 export interface MCCreateRequest<Endpoint extends ClientEndpoints> {
   endpoint: Extract<keyof Endpoint["list"], string>;
@@ -28,16 +27,12 @@ export interface MCCreateRequest<Endpoint extends ClientEndpoints> {
   isDraft?: boolean;
 }
 
-// * UPDATE LIST API
-
 /** `update` list request type */
 export interface MCUpdateListRequest<Endpoint extends ClientEndpoints> {
   endpoint: Extract<keyof Endpoint["list"], string>;
   contentId: string;
   content: Partial<Endpoint["list"][this["endpoint"]]>;
 }
-
-// * UPDATE OBJECT API
 
 /** `udpate` object request type */
 export interface MCUpdateObjectRequest<Endpoint extends ClientEndpoints> {
@@ -51,8 +46,6 @@ export type MCUpdateRequest<Endpoint extends ClientEndpoints> =
   | MCUpdateListRequest<Endpoint>
   | MCUpdateObjectRequest<Endpoint>;
 
-// * DELETE API
-
 /** `delete` request type */
 export type MCDeleteRequest<Endpoints extends ClientEndpoints> = {
   endpoint: Extract<
@@ -65,8 +58,6 @@ export type MCDeleteRequest<Endpoints extends ClientEndpoints> = {
 export type WriteResponse = {
   id: string;
 };
-
-// ! GET APIS
 
 export type ResolveDepthResponse<ContentType, Depth extends number = 1> = {
   [K in keyof ContentType]: ContentType[K] extends infer Props
@@ -95,7 +86,7 @@ export type ResolveContentType<
   Kind extends keyof ClientEndpoints,
   Request extends { endpoint: keyof Endpoints[Kind] },
   ContentType = Endpoints[Kind][Request["endpoint"]] &
-    (Kind extends "list" ? MCListBase : MCObjectBase)
+    (Kind extends "list" ? MCListItemBase : MCObjectBase)
 > = Request extends {
   queries: {
     fields: (infer Fields extends keyof ContentType)[];
@@ -104,15 +95,13 @@ export type ResolveContentType<
   ? ResolveDepthQuery<Request, Pick<ContentType, Fields>>
   : ResolveDepthQuery<Request, ContentType>;
 
-// * GET LIST API
-
 /** `getList` queries type */
 export type MCGetListQueries<E> = {
   draftKey?: string;
   limit?: number;
   offset?: number;
   orders?: string;
-  fields?: Extract<keyof E | keyof MCListBase, string>[];
+  fields?: Extract<keyof E | keyof MCListItemBase, string>[];
   q?: string;
   depth?: DepthNumber;
   ids?: string | string[];
@@ -127,22 +116,17 @@ export interface MCGetListRequest<Endpoints extends ClientEndpoints> {
 }
 
 /** `getList` response type */
-export interface MCGetListResponse<
+export type MCGetListResponse<
   Endpoints extends ClientEndpoints,
   Request extends MCGetListRequest<Endpoints>
-> {
+> = {
   contents: ResolveContentType<Endpoints, "list", Request>[];
-  totalCount: number;
-  limit: number;
-  offset: number;
-}
-
-// * GET LIST ITEM API
+} & MCListResponseBase;
 
 /** `getListItem` queries type */
 export type MCGetListItemQueries<ContentType> = {
   draftKey?: string;
-  fields?: Extract<keyof ContentType | keyof MCListBase, string>[];
+  fields?: Extract<keyof ContentType | keyof MCListItemBase, string>[];
   depth?: DepthNumber;
   richEditorFormat?: "html" | "object";
 };
@@ -159,8 +143,6 @@ export type MCGetListItemResponse<
   Endpoints extends ClientEndpoints,
   Request extends MCGetListItemRequest<Endpoints>
 > = ResolveContentType<Endpoints, "list", Request>;
-
-// * GET OBJECT API
 
 /** `getObject` queries type */
 export type MCGetObjectQueries<ContentType> = {

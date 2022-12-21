@@ -47,8 +47,11 @@ const responseHandler = async (res: Response) => {
 
 export const fetchHandler: FetchHandler = async props => {
   const { method, url, apiKey, customFetch } = props;
-  const headers = {
+  const apiKeyHeader = {
     "x-microcms-api-key": apiKey,
+  };
+  const contentType = {
+    "content-type": "application/json",
   };
 
   switch (method) {
@@ -56,7 +59,7 @@ export const fetchHandler: FetchHandler = async props => {
       const stringified = parser(props.queries ?? {});
       const res = await fetcher(
         `${url}${stringified ? `?${stringified}` : ""}`,
-        { method, headers },
+        { method, headers: apiKeyHeader },
         customFetch
       );
       return await responseHandler(res);
@@ -66,7 +69,7 @@ export const fetchHandler: FetchHandler = async props => {
       const res = await fetcher(
         `${url}${stringified ? `?${stringified}` : ""}`,
         {
-          headers,
+          headers: { ...apiKeyHeader, ...contentType },
           method,
           body: JSON.stringify(props.body),
         },
@@ -79,7 +82,7 @@ export const fetchHandler: FetchHandler = async props => {
       const res = await fetcher(
         `${url}${stringified ? `?${stringified}` : ""}`,
         {
-          headers,
+          headers: { ...apiKeyHeader, ...contentType },
           method,
           body: JSON.stringify(props.body),
         },
@@ -91,7 +94,7 @@ export const fetchHandler: FetchHandler = async props => {
       const res = await fetcher(
         url,
         {
-          headers,
+          headers: { ...apiKeyHeader, ...contentType },
           method,
           body: JSON.stringify(props.body),
         },
@@ -103,7 +106,7 @@ export const fetchHandler: FetchHandler = async props => {
       const stringified = parser(props.queries ?? {});
       const res = await fetcher(
         `${url}${stringified ? `?${stringified}` : ""}`,
-        { method, headers },
+        { method, headers: apiKeyHeader },
         customFetch
       );
       return await responseHandler(res);

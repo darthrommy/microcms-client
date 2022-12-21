@@ -65,5 +65,47 @@ export const createClient: MCClient = ({
         customFetch,
       });
     },
+    unstable_getListMeta: req => {
+      return fetchHandler({
+        url: `${baseUrl}/contents/${req.endpoint}`,
+        method: "GET",
+        apiKey,
+        customFetch,
+      });
+    },
+    unstable_getListItemMeta: req => {
+      return fetchHandler({
+        url: `${baseUrl}/contents/${req.endpoint}/${req.contentId}`,
+        method: "GET",
+        apiKey,
+        customFetch,
+      });
+    },
+    unstable_getObjectMeta: req => {
+      return fetchHandler({
+        url: `${baseUrl}/contents/${req.endpoint}`,
+        method: "GET",
+        apiKey,
+        customFetch,
+      });
+    },
+    unstable_updateStatus: req => {
+      return fetchHandler({
+        url: `${baseUrl}/contents/${req.endpoint}/${req.contentId}`,
+        method: "PATCH",
+        body: req.content,
+        apiKey,
+        customFetch,
+      });
+    },
+    unstable_getMedia: req => {
+      return fetchHandler({
+        url: `${baseUrl}/media`,
+        method: "GET",
+        queries: req.quries,
+        apiKey,
+        customFetch,
+      });
+    },
   };
 };

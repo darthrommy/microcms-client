@@ -1,16 +1,10 @@
 import { Fetch } from "../type-utils";
 import { parser } from "./parser";
 
-type Fetcher = (
+const fetcher = async (
   input: string,
   init: RequestInit,
-  customFetch?: Fetch
-) => Promise<Response>;
-
-const fetcher: Fetcher = async (
-  input: string,
-  init: RequestInit,
-  customFetch = fetch
+  customFetch: Fetch = fetch
 ) => {
   return await customFetch(input, init);
 };
@@ -30,7 +24,7 @@ type FetchHandler = (
         }
       | {
           method: "POST" | "PUT";
-          body: object;
+          body: any;
           queries?: object;
         }
       | {
@@ -40,42 +34,79 @@ type FetchHandler = (
     )
 ) => Promise<any>;
 
+const responseHandler = async (res: Response) => {
+  if (res.ok) {
+    return await res.json();
+  } else {
+    const body = await res.json();
+    throw new Error(
+      `MicroCMS fetch API Error\n  ${res.status}: ${body["message"]}`
+    );
+  }
+};
+
 export const fetchHandler: FetchHandler = async props => {
   const { method, url, apiKey, customFetch } = props;
   const headers = {
     "x-microcms-api-key": apiKey,
   };
 
-  if (method === "GET" || method === "DELETE") {
-    const stringified = parser(props.queries ?? {});
-    const res = await fetcher(
-      `${url}${stringified ? `?${stringified}` : ""}`,
-      { method, headers },
-      customFetch
-    );
-    return await res.json();
-  } else if (method === "POST" || method === "PUT") {
-    const stringified = parser(props.queries ?? {});
-    const res = await fetcher(
-      `${url}${stringified ? `?${stringified}` : ""}`,
-      {
-        headers,
-        method,
-        body: JSON.stringify(props.body),
-      },
-      customFetch
-    );
-    return await res.json();
-  } else if (method === "PATCH") {
-    const res = await fetcher(
-      url,
-      {
-        headers,
-        method,
-        body: JSON.stringify(props.body),
-      },
-      customFetch
-    );
-    return await res.json();
+  switch (method) {
+    case "GET": {
+      const stringified = parser(props.queries ?? {});
+      const res = await fetcher(
+        `${url}${stringified ? `?${stringified}` : ""}`,
+        { method, headers },
+        customFetch
+      );
+      return await responseHandler(res);
+    }
+    case "POST": {
+      const stringified = parser(props.queries ?? {});
+      const res = await fetcher(
+        `${url}${stringified ? `?${stringified}` : ""}`,
+        {
+          headers,
+          method,
+          body: JSON.stringify(props.body),
+        },
+        customFetch
+      );
+      return await responseHandler(res);
+    }
+    case "PUT": {
+      const stringified = parser(props.queries ?? {});
+      const res = await fetcher(
+        `${url}${stringified ? `?${stringified}` : ""}`,
+        {
+          headers,
+          method,
+          body: JSON.stringify(props.body),
+        },
+        customFetch
+      );
+      return await responseHandler(res);
+    }
+    case "PATCH": {
+      const res = await fetcher(
+        url,
+        {
+          headers,
+          method,
+          body: JSON.stringify(props.body),
+        },
+        customFetch
+      );
+      return await responseHandler(res);
+    }
+    case "DELETE": {
+      const stringified = parser(props.queries ?? {});
+      const res = await fetcher(
+        `${url}${stringified ? `?${stringified}` : ""}`,
+        { method, headers },
+        customFetch
+      );
+      return await responseHandler(res);
+    }
   }
 };

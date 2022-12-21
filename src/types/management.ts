@@ -41,9 +41,7 @@ export type MCGetObjectMetaResponse = MCMeta;
 export type MCUpdateStatusRequest<Endpoint extends ClientEndpoints> = {
   endpoint: Extract<keyof Endpoint["list"], string>;
   contentId: string;
-  content: {
-    status: MCContentStatus;
-  };
+  status: MCContentStatus;
 };
 
 /** `getMedia` request type */

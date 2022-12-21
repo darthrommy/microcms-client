@@ -43,7 +43,7 @@ export const createClient: MCClient = ({
         }`,
         method: req.contentId ? "PUT" : "POST",
         body: req.content,
-        queries: req.isDraft ? { draft: true } : {},
+        queries: req.isDraft ? { status: "draft" } : {},
         apiKey,
         customFetch,
       });
@@ -93,7 +93,7 @@ export const createClient: MCClient = ({
       return fetchHandler({
         url: `${baseUrl}/contents/${req.endpoint}/${req.contentId}`,
         method: "PATCH",
-        body: req.content,
+        body: { status: req.status },
         apiKey,
         customFetch,
       });

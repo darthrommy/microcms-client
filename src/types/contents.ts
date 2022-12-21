@@ -24,7 +24,7 @@ export interface MCCreateRequest<Endpoint extends ClientEndpoints> {
   endpoint: Extract<keyof Endpoint["list"], string>;
   contentId?: string;
   content: ResolveUpsertRelation<Endpoint["list"][this["endpoint"]]>;
-  isDraft?: boolean;
+  isDraft?: true;
 }
 
 /** `update` list request type */

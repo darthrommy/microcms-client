@@ -16,7 +16,3 @@ type NumberToTuple<
 export type DecrementNum<N extends number> = ArrayLength<
   DeleteOneItem<NumberToTuple<N>>
 >;
-
-export type Fetch = typeof fetch;
-
-export type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";

@@ -1,4 +1,4 @@
-import { Fetch } from "../type-utils";
+import { Fetch } from "../types/base";
 import { parser } from "./parser";
 
 const fetcher = async (

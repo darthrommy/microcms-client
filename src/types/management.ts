@@ -45,17 +45,13 @@ export type MCUpdateStatusRequest<Endpoint extends ClientEndpoints> = {
 };
 
 /** `getMedia` request type */
-export type MCGetMediaRequest = {
-  queries?: {
-    limit?: number;
-    offset?: number;
-    imageOnly?: true;
-  };
+export type MCGetMediaQueries = {
+  limit?: number;
+  offset?: number;
+  imageOnly?: true;
 };
 
 /** `getMedia` response type */
-export type MCGetMediaResponse<Request extends MCGetMediaRequest> = {
-  media: (Request extends { queries: { imageOnly: true } }
-    ? MCImage
-    : MCImage | unknown)[];
+export type MCGetMediaResponse<Queries extends MCGetMediaQueries> = {
+  media: (Queries extends { imageOnly: true } ? MCImage : MCImage | unknown)[];
 } & MCListResponseBase;

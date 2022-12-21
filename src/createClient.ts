@@ -1,4 +1,4 @@
-import { API_VERSION, BASE_DOMAIN } from "./lib/static";
+import { API_VERSION, BASE_DOMAIN, BASE_MNG_DOMAIN } from "./lib/static";
 import { MCClient } from "./types";
 import { fetchHandler } from "./lib/handler";
 
@@ -8,6 +8,7 @@ export const createClient: MCClient = ({
   customFetch,
 }) => {
   const baseUrl = `https://${serviceDomain}.${BASE_DOMAIN}/api/${API_VERSION}`;
+  const baseMngUrl = `https://${serviceDomain}.${BASE_MNG_DOMAIN}/api/${API_VERSION}`;
   return {
     getList: req => {
       return fetchHandler({
@@ -67,7 +68,7 @@ export const createClient: MCClient = ({
     },
     unstable_getListMeta: req => {
       return fetchHandler({
-        url: `${baseUrl}/contents/${req.endpoint}`,
+        url: `${baseMngUrl}/contents/${req.endpoint}`,
         method: "GET",
         apiKey,
         customFetch,
@@ -75,7 +76,7 @@ export const createClient: MCClient = ({
     },
     unstable_getListItemMeta: req => {
       return fetchHandler({
-        url: `${baseUrl}/contents/${req.endpoint}/${req.contentId}`,
+        url: `${baseMngUrl}/contents/${req.endpoint}/${req.contentId}`,
         method: "GET",
         apiKey,
         customFetch,
@@ -83,7 +84,7 @@ export const createClient: MCClient = ({
     },
     unstable_getObjectMeta: req => {
       return fetchHandler({
-        url: `${baseUrl}/contents/${req.endpoint}`,
+        url: `${baseMngUrl}/contents/${req.endpoint}`,
         method: "GET",
         apiKey,
         customFetch,
@@ -91,7 +92,7 @@ export const createClient: MCClient = ({
     },
     unstable_updateStatus: req => {
       return fetchHandler({
-        url: `${baseUrl}/contents/${req.endpoint}/${req.contentId}`,
+        url: `${baseMngUrl}/contents/${req.endpoint}/${req.contentId}`,
         method: "PATCH",
         body: { status: req.status },
         apiKey,
@@ -100,9 +101,9 @@ export const createClient: MCClient = ({
     },
     unstable_getMedia: req => {
       return fetchHandler({
-        url: `${baseUrl}/media`,
+        url: `${baseMngUrl}/media`,
         method: "GET",
-        queries: req.queries,
+        queries: req,
         apiKey,
         customFetch,
       });

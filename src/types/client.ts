@@ -16,7 +16,7 @@ import {
   MCGetListItemMetaResponse,
   MCGetListMetaRequest,
   MCGetListMetaResponse,
-  MCGetMediaRequest,
+  MCGetMediaQueries,
   MCGetMediaResponse,
   MCGetObjectMetaRequest,
   MCGetObjectMetaResponse,
@@ -71,7 +71,7 @@ export type MCClient = <Endpoints extends ClientEndpoints>(args: {
     request: Request
   ) => Promise<void>;
 
-  unstable_getMedia: <Request extends MCGetMediaRequest>(
-    request: Request
-  ) => Promise<MCGetMediaResponse<Request>>;
+  unstable_getMedia: <Queries extends MCGetMediaQueries>(
+    queries?: Queries
+  ) => Promise<MCGetMediaResponse<Queries>>;
 };

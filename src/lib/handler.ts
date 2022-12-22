@@ -9,14 +9,6 @@ const fetcher = async (
   return await customFetch(input, init);
 };
 
-const safeParse = (json: any) => {
-  try {
-    return JSON.parse(json);
-  } catch {
-    return JSON.parse(JSON.stringify(json));
-  }
-};
-
 type RequestBase = {
   url: string;
   apiKey: string;
@@ -42,10 +34,13 @@ type FetchHandler = (
     )
 ) => Promise<any>;
 
-const thrower = (ok: boolean, status: number, body: any) => {
-  if (!ok) {
+const responseHandler = async (res: Response) => {
+  if (res.ok) {
+    return await res.json();
+  } else {
+    const body = await res.json();
     throw new Error(
-      `MicroCMS fetch API Error\n  ${status}: ${body["message"]}`
+      `MicroCMS fetch API Error\n  ${res.status}: ${body["message"]}`
     );
   }
 };
@@ -67,11 +62,7 @@ export const fetchHandler: FetchHandler = async (props) => {
         { method, headers: apiKeyHeader },
         customFetch
       );
-      const json = safeParse(await res.json());
-      if (!res.ok) {
-        thrower(res.ok, res.status, json);
-      }
-      return json;
+      return await responseHandler(res);
     }
     case "POST": {
       const stringified = parser(props.queries ?? {});
@@ -84,11 +75,7 @@ export const fetchHandler: FetchHandler = async (props) => {
         },
         customFetch
       );
-      const json = safeParse(await res.json());
-      if (!res.ok) {
-        thrower(res.ok, res.status, json);
-      }
-      return json;
+      return await responseHandler(res);
     }
     case "PUT": {
       const stringified = parser(props.queries ?? {});
@@ -101,11 +88,7 @@ export const fetchHandler: FetchHandler = async (props) => {
         },
         customFetch
       );
-      const json = safeParse(await res.json());
-      if (!res.ok) {
-        thrower(res.ok, res.status, json);
-      }
-      return json;
+      return await responseHandler(res);
     }
     case "PATCH": {
       const res = await fetcher(
@@ -117,11 +100,7 @@ export const fetchHandler: FetchHandler = async (props) => {
         },
         customFetch
       );
-      const json = safeParse(await res.json());
-      if (!res.ok) {
-        thrower(res.ok, res.status, json);
-      }
-      return json;
+      return await responseHandler(res);
     }
     case "DELETE": {
       const stringified = parser(props.queries ?? {});
@@ -131,8 +110,7 @@ export const fetchHandler: FetchHandler = async (props) => {
         customFetch
       );
       if (!res.ok) {
-        const json = await res.json();
-        thrower(res.ok, res.status, json);
+        await responseHandler(res);
       }
       return;
     }

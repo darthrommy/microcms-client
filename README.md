@@ -1,8 +1,16 @@
-## `@darthrommy/microcms-client`
+# `@darthrommy/microcms-client`
 
-**WARNING:** This is an **UNOFFICIAL** microCMS client library based on the [`microcms-ts-sdk`](https://github.com/tsuki-lab/microcms-ts-sdk) types.
+## This is UNOFFICIAL
 
-The APIs are almost the same as that of [`micrcms-js-sdk`](https://github.com/microcmsio/microcms-js-sdk), but a few things are different.
+This is an **UNOFFICIAL** microCMS client library based on the [`microcms-ts-sdk`](https://github.com/tsuki-lab/microcms-ts-sdk) types.
+
+Plus, I am **NOT** a `microcms-js-sdk` maintainer nor a `microcms-ts-sdk` developer.
+
+Being unable to guarantee that the APIs are always compatible with the official ones, I highly recommend you to use the latest [`microcms-js-sdk`](https://github.com/microcmsio/microcms-js-sdk).
+
+## Notes
+
+The APIs are almost the same as that of [`microcms-js-sdk`](https://github.com/microcmsio/microcms-js-sdk), but a few things are different.
 
 ### `getListDetails`→`getListItem`
 
@@ -12,9 +20,21 @@ I found the name `getListDetails` a bit confusing, so I renamed it to `getListIt
 
 The `get` API is omitted in this library, because more specific APIs(`getList`, `getObject`, `getListItem`) exist.
 
+### Standard `Fetch` API
+
+While the `microcms-js-sdk` uses `cross-fetch` as the default fetch method, this library uses the standard `fetch()` as the default. However, like the official one, this method can be customized by configuring the `customFetch` option in the `createClient` argument.
+
+```ts
+createClient({
+  serviceDomain: string;
+  apiKey: string;
+  customFetch?: typeof fetch
+})
+```
+
 ### Changed `ResolveDepthResponse` type definition
 
-The original `ResolveDepthResponse` definition is:
+The original `ResolveDepthResponse`(see `microcms-ts-sdk`) definition is:
 
 ```ts
 type ResolveDepthResponse<T, Depth extends number = 1> = MicroCMSListContent & {
@@ -48,7 +68,8 @@ const { contents } = await client.getList({
   queries: { fields: ["name"] }, // only need "name" property
 });
 
-typeof contents: {
+//typeof contents
+{
   name: string;
   publishedAt: string;    // actually does not exists
   createdAt: string;      // this
@@ -58,15 +79,13 @@ typeof contents: {
 
 ```
 
-This is different from actual return type:
-
-```ts
-typeof contents: { name: string; }[];
-```
-
-So I modified this type to:
+This is different from actual return type `{ name: string }[]`. So I modified this type to:
 
 ```diff
 + type ResolveDepthResponse<ContentType, Depth extends number = 1> = {
 - type ResolveDepthResponse<T, Depth extends number = 1> = MicroCMSListContent & {
 ```
+
+## License
+
+This software contains productions distributed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).

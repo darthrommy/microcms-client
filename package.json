@@ -1,6 +1,6 @@
 {
   "name": "@darthrommy/microcms-client",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Unofficial microCMS client with type-safety.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -25,7 +25,6 @@
   "sideEffects": false,
   "scripts": {
     "lint": "eslint src/*",
-    "precleanup": "npm run lint",
     "cleanup": "rimraf dist",
     "prebuild": "npm run cleanup",
     "build": "rollup -c",
@@ -51,5 +50,8 @@
     "rollup": "^3.7.5",
     "rollup-plugin-esbuild": "^5.0.0",
     "typescript": "^4.9.4"
+  },
+  "engines": {
+    "node": ">=14.16"
   }
 }

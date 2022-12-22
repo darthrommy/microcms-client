@@ -1,4 +1,4 @@
-import { API_VERSION, BASE_DOMAIN } from "./lib/static";
+import { API_VERSION, BASE_DOMAIN, BASE_MNG_DOMAIN } from "./lib/static";
 import { MCClient } from "./types";
 import { fetchHandler } from "./lib/handler";
 
@@ -8,8 +8,9 @@ export const createClient: MCClient = ({
   customFetch,
 }) => {
   const baseUrl = `https://${serviceDomain}.${BASE_DOMAIN}/api/${API_VERSION}`;
+  const baseMngUrl = `https://${serviceDomain}.${BASE_MNG_DOMAIN}/api/${API_VERSION}`;
   return {
-    getList: req => {
+    getList: (req) => {
       return fetchHandler({
         url: `${baseUrl}/${req.endpoint}`,
         method: "GET",
@@ -18,7 +19,7 @@ export const createClient: MCClient = ({
         customFetch,
       });
     },
-    getListItem: req => {
+    getListItem: (req) => {
       return fetchHandler({
         url: `${baseUrl}/${req.endpoint}/${req.contentId}`,
         method: "GET",
@@ -27,7 +28,7 @@ export const createClient: MCClient = ({
         customFetch,
       });
     },
-    getObject: req => {
+    getObject: (req) => {
       return fetchHandler({
         url: `${baseUrl}/${req.endpoint}`,
         method: "GET",
@@ -36,19 +37,19 @@ export const createClient: MCClient = ({
         customFetch,
       });
     },
-    create: req => {
+    create: (req) => {
       return fetchHandler({
         url: `${baseUrl}/${req.content}${
           req.contentId ? `/${req.contentId}` : ""
         }`,
         method: req.contentId ? "PUT" : "POST",
         body: req.content,
-        queries: req.isDraft ? { draft: true } : {},
+        queries: req.isDraft ? { status: "draft" } : {},
         apiKey,
         customFetch,
       });
     },
-    update: req => {
+    update: (req) => {
       return fetchHandler({
         url: `${baseUrl}/${req.endpoint}/${req.contentId}`,
         method: "PATCH",
@@ -57,10 +58,52 @@ export const createClient: MCClient = ({
         customFetch,
       });
     },
-    delete: req => {
+    delete: (req) => {
       return fetchHandler({
         url: `${baseUrl}/${req.endpoint}/${req.contentId}`,
         method: "DELETE",
+        apiKey,
+        customFetch,
+      });
+    },
+    unstable_getListMeta: (req) => {
+      return fetchHandler({
+        url: `${baseMngUrl}/contents/${req.endpoint}`,
+        method: "GET",
+        apiKey,
+        customFetch,
+      });
+    },
+    unstable_getListItemMeta: (req) => {
+      return fetchHandler({
+        url: `${baseMngUrl}/contents/${req.endpoint}/${req.contentId}`,
+        method: "GET",
+        apiKey,
+        customFetch,
+      });
+    },
+    unstable_getObjectMeta: (req) => {
+      return fetchHandler({
+        url: `${baseMngUrl}/contents/${req.endpoint}`,
+        method: "GET",
+        apiKey,
+        customFetch,
+      });
+    },
+    unstable_updateStatus: (req) => {
+      return fetchHandler({
+        url: `${baseMngUrl}/contents/${req.endpoint}/${req.contentId}`,
+        method: "PATCH",
+        body: { status: req.status },
+        apiKey,
+        customFetch,
+      });
+    },
+    unstable_getMedia: (req) => {
+      return fetchHandler({
+        url: `${baseMngUrl}/media`,
+        method: "GET",
+        queries: req,
         apiKey,
         customFetch,
       });

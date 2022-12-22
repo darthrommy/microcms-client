@@ -9,6 +9,14 @@ const fetcher = async (
   return await customFetch(input, init);
 };
 
+const safeParse = (json: any) => {
+  try {
+    return JSON.parse(json);
+  } catch {
+    return JSON.parse(JSON.stringify(json));
+  }
+};
+
 type RequestBase = {
   url: string;
   apiKey: string;
@@ -34,18 +42,15 @@ type FetchHandler = (
     )
 ) => Promise<any>;
 
-const responseHandler = async (res: Response) => {
-  if (res.ok) {
-    return await res.json();
-  } else {
-    const body = await res.json();
+const thrower = (ok: boolean, status: number, body: any) => {
+  if (!ok) {
     throw new Error(
-      `MicroCMS fetch API Error\n  ${res.status}: ${body["message"]}`
+      `MicroCMS fetch API Error\n  ${status}: ${body["message"]}`
     );
   }
 };
 
-export const fetchHandler: FetchHandler = async props => {
+export const fetchHandler: FetchHandler = async (props) => {
   const { method, url, apiKey, customFetch } = props;
   const apiKeyHeader = {
     "x-microcms-api-key": apiKey,
@@ -62,7 +67,11 @@ export const fetchHandler: FetchHandler = async props => {
         { method, headers: apiKeyHeader },
         customFetch
       );
-      return await responseHandler(res);
+      const json = safeParse(await res.json());
+      if (!res.ok) {
+        thrower(res.ok, res.status, json);
+      }
+      return json;
     }
     case "POST": {
       const stringified = parser(props.queries ?? {});
@@ -75,7 +84,11 @@ export const fetchHandler: FetchHandler = async props => {
         },
         customFetch
       );
-      return await responseHandler(res);
+      const json = safeParse(await res.json());
+      if (!res.ok) {
+        thrower(res.ok, res.status, json);
+      }
+      return json;
     }
     case "PUT": {
       const stringified = parser(props.queries ?? {});
@@ -88,7 +101,11 @@ export const fetchHandler: FetchHandler = async props => {
         },
         customFetch
       );
-      return await responseHandler(res);
+      const json = safeParse(await res.json());
+      if (!res.ok) {
+        thrower(res.ok, res.status, json);
+      }
+      return json;
     }
     case "PATCH": {
       const res = await fetcher(
@@ -100,7 +117,11 @@ export const fetchHandler: FetchHandler = async props => {
         },
         customFetch
       );
-      return await responseHandler(res);
+      const json = safeParse(await res.json());
+      if (!res.ok) {
+        thrower(res.ok, res.status, json);
+      }
+      return json;
     }
     case "DELETE": {
       const stringified = parser(props.queries ?? {});
@@ -109,7 +130,11 @@ export const fetchHandler: FetchHandler = async props => {
         { method, headers: apiKeyHeader },
         customFetch
       );
-      return await responseHandler(res);
+      if (!res.ok) {
+        const json = await res.json();
+        thrower(res.ok, res.status, json);
+      }
+      return;
     }
   }
 };

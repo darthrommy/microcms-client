@@ -45,7 +45,7 @@ const responseHandler = async (res: Response) => {
   }
 };
 
-export const fetchHandler: FetchHandler = async props => {
+export const fetchHandler: FetchHandler = async (props) => {
   const { method, url, apiKey, customFetch } = props;
   const apiKeyHeader = {
     "x-microcms-api-key": apiKey,
@@ -109,7 +109,10 @@ export const fetchHandler: FetchHandler = async props => {
         { method, headers: apiKeyHeader },
         customFetch
       );
-      return await responseHandler(res);
+      if (!res.ok) {
+        await responseHandler(res);
+      }
+      return;
     }
   }
 };

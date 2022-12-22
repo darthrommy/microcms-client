@@ -39,7 +39,7 @@ export const createClient: MCClient = ({
     },
     create: (req) => {
       return fetchHandler({
-        url: `${baseUrl}/${req.content}${
+        url: `${baseUrl}/${req.endpoint}${
           req.contentId ? `/${req.contentId}` : ""
         }`,
         method: req.contentId ? "PUT" : "POST",

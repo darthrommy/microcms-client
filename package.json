@@ -1,6 +1,6 @@
 {
   "name": "@darthrommy/microcms-client",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Unofficial microCMS client with type-safety.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

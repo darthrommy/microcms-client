@@ -19,6 +19,7 @@ export const createClient: MCClient = ({
         customFetch,
       });
     },
+
     getListItem: (req) => {
       return fetchHandler({
         url: `${baseUrl}/${req.endpoint}/${req.contentId}`,
@@ -28,6 +29,7 @@ export const createClient: MCClient = ({
         customFetch,
       });
     },
+
     getObject: (req) => {
       return fetchHandler({
         url: `${baseUrl}/${req.endpoint}`,
@@ -37,6 +39,7 @@ export const createClient: MCClient = ({
         customFetch,
       });
     },
+
     create: (req) => {
       return fetchHandler({
         url: `${baseUrl}/${req.endpoint}${
@@ -49,7 +52,8 @@ export const createClient: MCClient = ({
         customFetch,
       });
     },
-    update: (req) => {
+
+    updateList: (req) => {
       return fetchHandler({
         url: `${baseUrl}/${req.endpoint}/${req.contentId}`,
         method: "PATCH",
@@ -58,6 +62,17 @@ export const createClient: MCClient = ({
         customFetch,
       });
     },
+
+    updateObject: (req) => {
+      return fetchHandler({
+        url: `${baseUrl}/${req.endpoint}`,
+        method: "PATCH",
+        body: req.content,
+        apiKey,
+        customFetch,
+      });
+    },
+
     delete: (req) => {
       return fetchHandler({
         url: `${baseUrl}/${req.endpoint}/${req.contentId}`,
@@ -66,7 +81,8 @@ export const createClient: MCClient = ({
         customFetch,
       });
     },
-    unstable_getListMeta: (req) => {
+
+    getListMeta: (req) => {
       return fetchHandler({
         url: `${baseMngUrl}/contents/${req.endpoint}`,
         method: "GET",
@@ -74,7 +90,8 @@ export const createClient: MCClient = ({
         customFetch,
       });
     },
-    unstable_getListItemMeta: (req) => {
+
+    getListItemMeta: (req) => {
       return fetchHandler({
         url: `${baseMngUrl}/contents/${req.endpoint}/${req.contentId}`,
         method: "GET",
@@ -82,7 +99,8 @@ export const createClient: MCClient = ({
         customFetch,
       });
     },
-    unstable_getObjectMeta: (req) => {
+
+    getObjectMeta: (req) => {
       return fetchHandler({
         url: `${baseMngUrl}/contents/${req.endpoint}`,
         method: "GET",
@@ -90,7 +108,8 @@ export const createClient: MCClient = ({
         customFetch,
       });
     },
-    unstable_updateStatus: (req) => {
+
+    updateStatus: (req) => {
       return fetchHandler({
         url: `${baseMngUrl}/contents/${req.endpoint}/${req.contentId}`,
         method: "PATCH",
@@ -99,7 +118,8 @@ export const createClient: MCClient = ({
         customFetch,
       });
     },
-    unstable_getMedia: (req) => {
+
+    getMedia: (req) => {
       return fetchHandler({
         url: `${baseMngUrl}/media`,
         method: "GET",

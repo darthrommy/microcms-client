@@ -40,11 +40,6 @@ export interface MCUpdateObjectRequest<Endpoint extends ClientEndpoints> {
   content: Partial<Endpoint["object"][this["endpoint"]]>;
 }
 
-/** `update` request type */
-export type MCUpdateRequest<Endpoint extends ClientEndpoints> =
-  | MCUpdateListRequest<Endpoint>
-  | MCUpdateObjectRequest<Endpoint>;
-
 /** `delete` request type */
 export type MCDeleteRequest<Endpoints extends ClientEndpoints> = {
   endpoint: Extract<keyof Endpoints["list"], string>;

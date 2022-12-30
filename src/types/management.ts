@@ -1,5 +1,6 @@
 import {
   ClientEndpoints,
+  MCContentId,
   MCContentStatus,
   MCImage,
   MCListResponseBase,
@@ -53,5 +54,7 @@ export type MCGetMediaQueries = {
 
 /** `getMedia` response type */
 export type MCGetMediaResponse<Queries extends MCGetMediaQueries> = {
-  media: (Queries extends { imageOnly: true } ? MCImage : MCImage | unknown)[];
+  media: (Queries extends { imageOnly: true }
+    ? MCImage & MCContentId
+    : unknown)[];
 } & MCListResponseBase;

@@ -62,10 +62,15 @@ export type MCImage = {
   url: string;
   width?: number;
   height?: number;
-} & MCContentId;
+};
 
-/** An adapted relation fields. Use this when defining recursive fields. */
+/** type for relational fields */
 export type MCRelation<T> = T & MCListItemBase;
+
+/** type for custom fields */
+export type MCCustomField<Id extends string, Field extends KV> = {
+  fieldId: Id;
+} & Field;
 
 /** A template type to define types of each endpoints. See https://github.com/tsuki-lab/microcms-ts-sdk#type-safe-usage */
 export type ClientEndpoints = {

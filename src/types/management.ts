@@ -45,6 +45,11 @@ export type MCUpdateStatusRequest<Endpoint extends ClientEndpoints> = {
   status: MCContentStatus;
 };
 
+export type MCSetObjectStatusRequest<Endpoint extends ClientEndpoints> = {
+  endpoint: Extract<keyof Endpoint["object"], string>;
+  status: MCContentStatus;
+};
+
 /** `getMedia` request type */
 export type MCGetMediaQueries = {
   limit?: number;

@@ -10,27 +10,31 @@ Being unable to guarantee that the APIs are always compatible with the official 
 
 ## Notes
 
-The APIs are almost the same as that of [`microcms-js-sdk`](https://github.com/microcmsio/microcms-js-sdk), but a few things are different.
+Since v0.4.0, API is no longer compatible with that of `microcms-js-sdk`. But I keep the following sentences as a changelog.
 
-### `getListDetails`→`getListItem`
-
-I found the name `getListDetails` a bit confusing, so I renamed it to `getListItem`.
-
-### No `get` API
-
-The `get` API is omitted in this library, because more specific APIs(`getList`, `getObject`, `getListItem`) exist.
-
-### Standard `Fetch` API
-
-While the `microcms-js-sdk` uses `cross-fetch` as the default fetch method, this library uses the standard `fetch()` as the default. However, like the official one, this method can be customized by configuring the `customFetch` option in the `createClient` argument.
-
-```ts
-createClient({
-  serviceDomain: string;
-  apiKey: string;
-  customFetch?: typeof fetch
-})
-```
+> **For *<0.4.0***
+>
+> The APIs are almost the same as that of [`microcms-js-sdk`](https://github.com/microcmsio/microcms-js-sdk), but a few things are different.
+>
+> ### `getListDetails`→`getListItem`
+>
+> I found the name `getListDetails` a bit confusing, so I renamed it to `getListItem`.
+>
+> ### No `get` API
+>
+> The `get` API is omitted in this library, because more specific APIs(`getList`, `getObject`, `getListItem`) exist.
+>
+> ### Standard `Fetch` API
+>
+> While the `microcms-js-sdk` uses `cross-fetch` as the default fetch method, this library uses the standard `fetch()` as the default. However, like the official one, this method can be customized by configuring the `customFetch` option in the `createClient` argument.
+>
+> ```ts
+> createClient({
+>  serviceDomain: string;
+>  apiKey: string;
+>  customFetch?: typeof fetch
+> })
+> ```
 
 ### Changed `ResolveDepthResponse` type definition
 

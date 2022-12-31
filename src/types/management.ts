@@ -1,5 +1,6 @@
 import {
   ClientEndpoints,
+  MCContentId,
   MCContentStatus,
   MCImage,
   MCListResponseBase,
@@ -44,6 +45,11 @@ export type MCUpdateStatusRequest<Endpoint extends ClientEndpoints> = {
   status: MCContentStatus;
 };
 
+export type MCSetObjectStatusRequest<Endpoint extends ClientEndpoints> = {
+  endpoint: Extract<keyof Endpoint["object"], string>;
+  status: MCContentStatus;
+};
+
 /** `getMedia` request type */
 export type MCGetMediaQueries = {
   limit?: number;
@@ -53,5 +59,7 @@ export type MCGetMediaQueries = {
 
 /** `getMedia` response type */
 export type MCGetMediaResponse<Queries extends MCGetMediaQueries> = {
-  media: (Queries extends { imageOnly: true } ? MCImage : MCImage | unknown)[];
+  media: (Queries extends { imageOnly: true }
+    ? MCImage & MCContentId
+    : unknown)[];
 } & MCListResponseBase;

@@ -36,22 +36,13 @@ export interface MCUpdateListRequest<Endpoint extends ClientEndpoints> {
 
 /** `udpate` object request type */
 export interface MCUpdateObjectRequest<Endpoint extends ClientEndpoints> {
-  endpoint: Extract<keyof Endpoint["list"], string>;
-  contentId: string;
+  endpoint: Extract<keyof Endpoint["object"], string>;
   content: Partial<Endpoint["object"][this["endpoint"]]>;
 }
 
-/** `update` request type */
-export type MCUpdateRequest<Endpoint extends ClientEndpoints> =
-  | MCUpdateListRequest<Endpoint>
-  | MCUpdateObjectRequest<Endpoint>;
-
 /** `delete` request type */
 export type MCDeleteRequest<Endpoints extends ClientEndpoints> = {
-  endpoint: Extract<
-    keyof Endpoints["list"] | keyof Endpoints["object"],
-    string
-  >;
+  endpoint: Extract<keyof Endpoints["list"], string>;
   contentId: string;
 };
 

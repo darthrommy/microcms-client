@@ -10,116 +10,130 @@ export const createClient: MCClient = ({
   const baseUrl = `https://${serviceDomain}.${BASE_DOMAIN}/api/${API_VERSION}`;
   const baseMngUrl = `https://${serviceDomain}.${BASE_MNG_DOMAIN}/api/${API_VERSION}`;
   return {
-    getList: (req) => {
-      return fetchHandler({
-        url: `${baseUrl}/${req.endpoint}`,
-        method: "GET",
-        queries: req.queries,
-        apiKey,
-        customFetch,
-      });
+    list: {
+      get: (req) => {
+        return fetchHandler({
+          url: `${baseUrl}/${req.endpoint}`,
+          method: "GET",
+          queries: req.queries,
+          apiKey,
+          customFetch,
+        });
+      },
+
+      item: (req) => {
+        return fetchHandler({
+          url: `${baseUrl}/${req.endpoint}/${req.contentId}`,
+          method: "GET",
+          queries: req.queries,
+          apiKey,
+          customFetch,
+        });
+      },
+
+      create: (req) => {
+        return fetchHandler({
+          url: `${baseUrl}/${req.endpoint}${
+            req.contentId ? `/${req.contentId}` : ""
+          }`,
+          method: req.contentId ? "PUT" : "POST",
+          body: req.content,
+          queries: req.isDraft ? { status: "draft" } : {},
+          apiKey,
+          customFetch,
+        });
+      },
+
+      update: (req) => {
+        return fetchHandler({
+          url: `${baseUrl}/${req.endpoint}/${req.contentId}`,
+          method: "PATCH",
+          body: req.content,
+          apiKey,
+          customFetch,
+        });
+      },
+
+      delete: (req) => {
+        return fetchHandler({
+          url: `${baseUrl}/${req.endpoint}/${req.contentId}`,
+          method: "DELETE",
+          apiKey,
+          customFetch,
+        });
+      },
+
+      meta: (req) => {
+        return fetchHandler({
+          url: `${baseMngUrl}/contents/${req.endpoint}`,
+          method: "GET",
+          apiKey,
+          customFetch,
+        });
+      },
+
+      itemMeta: (req) => {
+        return fetchHandler({
+          url: `${baseMngUrl}/contents/${req.endpoint}/${req.contentId}`,
+          method: "GET",
+          apiKey,
+          customFetch,
+        });
+      },
+
+      setStatus: (req) => {
+        return fetchHandler({
+          url: `${baseMngUrl}/contents/${req.endpoint}/${req.contentId}`,
+          method: "PATCH",
+          body: { status: req.status },
+          apiKey,
+          customFetch,
+        });
+      },
     },
 
-    getListItem: (req) => {
-      return fetchHandler({
-        url: `${baseUrl}/${req.endpoint}/${req.contentId}`,
-        method: "GET",
-        queries: req.queries,
-        apiKey,
-        customFetch,
-      });
+    object: {
+      get: (req) => {
+        return fetchHandler({
+          url: `${baseUrl}/${req.endpoint}`,
+          method: "GET",
+          queries: req.queries,
+          apiKey,
+          customFetch,
+        });
+      },
+
+      update: (req) => {
+        return fetchHandler({
+          url: `${baseUrl}/${req.endpoint}`,
+          method: "PATCH",
+          body: req.content,
+          apiKey,
+          customFetch,
+        });
+      },
+
+      meta: (req) => {
+        return fetchHandler({
+          url: `${baseMngUrl}/contents/${req.endpoint}`,
+          method: "GET",
+          apiKey,
+          customFetch,
+        });
+      },
+
+      setStatus: (req) => {
+        return fetchHandler({
+          url: `${baseMngUrl}/contents/${req.endpoint}`,
+          method: "PATCH",
+          body: { status: req.status },
+          apiKey,
+          customFetch,
+        });
+      },
     },
 
-    getObject: (req) => {
-      return fetchHandler({
-        url: `${baseUrl}/${req.endpoint}`,
-        method: "GET",
-        queries: req.queries,
-        apiKey,
-        customFetch,
-      });
-    },
-
-    create: (req) => {
-      return fetchHandler({
-        url: `${baseUrl}/${req.endpoint}${
-          req.contentId ? `/${req.contentId}` : ""
-        }`,
-        method: req.contentId ? "PUT" : "POST",
-        body: req.content,
-        queries: req.isDraft ? { status: "draft" } : {},
-        apiKey,
-        customFetch,
-      });
-    },
-
-    updateList: (req) => {
-      return fetchHandler({
-        url: `${baseUrl}/${req.endpoint}/${req.contentId}`,
-        method: "PATCH",
-        body: req.content,
-        apiKey,
-        customFetch,
-      });
-    },
-
-    updateObject: (req) => {
-      return fetchHandler({
-        url: `${baseUrl}/${req.endpoint}`,
-        method: "PATCH",
-        body: req.content,
-        apiKey,
-        customFetch,
-      });
-    },
-
-    delete: (req) => {
-      return fetchHandler({
-        url: `${baseUrl}/${req.endpoint}/${req.contentId}`,
-        method: "DELETE",
-        apiKey,
-        customFetch,
-      });
-    },
-
-    getListMeta: (req) => {
-      return fetchHandler({
-        url: `${baseMngUrl}/contents/${req.endpoint}`,
-        method: "GET",
-        apiKey,
-        customFetch,
-      });
-    },
-
-    getListItemMeta: (req) => {
-      return fetchHandler({
-        url: `${baseMngUrl}/contents/${req.endpoint}/${req.contentId}`,
-        method: "GET",
-        apiKey,
-        customFetch,
-      });
-    },
-
-    getObjectMeta: (req) => {
-      return fetchHandler({
-        url: `${baseMngUrl}/contents/${req.endpoint}`,
-        method: "GET",
-        apiKey,
-        customFetch,
-      });
-    },
-
-    updateStatus: (req) => {
-      return fetchHandler({
-        url: `${baseMngUrl}/contents/${req.endpoint}/${req.contentId}`,
-        method: "PATCH",
-        body: { status: req.status },
-        apiKey,
-        customFetch,
-      });
-    },
-
-    getMedia: (req) => {
+    media: (req) => {
       return fetchHandler({
         url: `${baseMngUrl}/media`,
         method: "GET",

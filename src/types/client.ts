@@ -21,6 +21,7 @@ import {
   MCGetMediaResponse,
   MCGetObjectMetaRequest,
   MCGetObjectMetaResponse,
+  MCSetObjectStatusRequest,
   MCUpdateStatusRequest,
 } from "./management";
 
@@ -30,87 +31,97 @@ export type MCClient = <Endpoints extends ClientEndpoints>(args: {
   apiKey: string;
   customFetch?: Fetch;
 }) => {
-  /** Contents API: equivalent to `GET /api/v1/{endpoint}`.
-   * @see https://rommy-docs.pages.dev/docs/microcms/contents-api/getlist
-   */
-  getList: <Request extends MCGetListRequest<Endpoints>>(
-    request: Request
-  ) => Promise<MCGetListResponse<Endpoints, Request>>;
+  list: {
+    /** Contents API: equivalent to `GET /api/v1/{endpoint}`.
+     * @see https://rommy-docs.pages.dev/docs/microcms/contents-api/list-get
+     */
+    get: <Request extends MCGetListRequest<Endpoints>>(
+      request: Request
+    ) => Promise<MCGetListResponse<Endpoints, Request>>;
 
-  /** Contents API: equivalent to `GET /api/v1/{endpoint}/{contendId}`.
-   * @see https://rommy-docs.pages.dev/docs/microcms/contents-api/getlistitem
-   */
-  getListItem: <Request extends MCGetListItemRequest<Endpoints>>(
-    request: Request
-  ) => Promise<MCGetListItemResponse<Endpoints, Request>>;
+    /** Contents API: equivalent to `GET /api/v1/{endpoint}/{contendId}`.
+     * @see https://rommy-docs.pages.dev/docs/microcms/contents-api/list-item
+     */
+    item: <Request extends MCGetListItemRequest<Endpoints>>(
+      request: Request
+    ) => Promise<MCGetListItemResponse<Endpoints, Request>>;
 
-  /** Contents API: equivalent to `GET /api/v1/{endpoint}`.
-   * @see https://rommy-docs.pages.dev/docs/microcms/contents-api/getobject
-   */
-  getObject: <Request extends MCGetObjectRequest<Endpoints>>(
-    request: Request
-  ) => Promise<MCGetObjectResponse<Endpoints, Request>>;
+    /** Contents API: equivalent to `POST /api/v1/{endpoint}` or `PUT /api/v1/{endpoint}/{contentId}`.
+     * @see https://rommy-docs.pages.dev/docs/microcms/contents-api/list-create
+     */
+    create: <Request extends MCCreateRequest<Endpoints>>(
+      request: Request
+    ) => Promise<WriteResponse>;
 
-  /** Contents API: equivalent to `POST /api/v1/{endpoint}` or `PUT /api/v1/{endpoint}/{contentId}`.
-   * @see https://rommy-docs.pages.dev/docs/microcms/contents-api/create
-   */
-  create: <Request extends MCCreateRequest<Endpoints>>(
-    request: Request
-  ) => Promise<WriteResponse>;
+    /** Contents API: equivalent to `PATCH /api/v1/{endpoint}/{contentId}`.
+     * @see https://rommy-docs.pages.dev/docs/microcms/contents-api/list-update
+     */
+    update: <Request extends MCUpdateListRequest<Endpoints>>(
+      request: Request
+    ) => Promise<WriteResponse>;
 
-  /** Contents API: equivalent to `PATCH /api/v1/{endpoint}/{contentId}`.
-   * @see https://rommy-docs.pages.dev/docs/microcms/contents-api/updatelist
-   */
-  updateList: <Request extends MCUpdateListRequest<Endpoints>>(
-    request: Request
-  ) => Promise<WriteResponse>;
+    /** Contents API: equivalent to `DELETE /api/v1/{endpoint}/{contentId}`.
+     * @see https://rommy-docs.pages.dev/docs/microcms/contents-api/list-delete
+     */
+    delete: <Request extends MCDeleteRequest<Endpoints>>(
+      request: Request
+    ) => Promise<void>;
 
-  /** Contents API: equivalent to `PATCH /api/v1/{endpoint}`.
-   * @see https://rommy-docs.pages.dev/docs/microcms/contents-api/updateobject
-   */
-  updateObject: <Request extends MCUpdateObjectRequest<Endpoints>>(
-    request: Request
-  ) => Promise<WriteResponse>;
+    /** Management API: equivalent to `GET /api/v1/contents/{endpoint}`.
+     * @see https://rommy-docs.pages.dev/docs/microcms/management-api/list-meta
+     */
+    meta: <Request extends MCGetListMetaRequest<Endpoints>>(
+      request: Request
+    ) => Promise<MCGetListMetaResponse>;
 
-  /** Contents API: equivalent to `DELETE /api/v1/{endpoint}/{contentId}`.
-   * @see https://rommy-docs.pages.dev/docs/microcms/contents-api/delete
-   */
-  delete: <Request extends MCDeleteRequest<Endpoints>>(
-    request: Request
-  ) => Promise<void>;
+    /** Management API: equivalent to `GET /api/v1/contents/{endpoint}/{contentId}`.
+     * @see https://rommy-docs.pages.dev/docs/microcms/management-api/list-itemmeta
+     */
+    itemMeta: <Request extends MCGetListItemMetaRequest<Endpoints>>(
+      request: Request
+    ) => Promise<MCGetListItemMetaResponse>;
 
-  /** Management API: equivalent to `GET /api/v1/contents/{endpoint}`.
-   * @see https://rommy-docs.pages.dev/docs/microcms/management-api/getlistmeta
-   */
-  getListMeta: <Request extends MCGetListMetaRequest<Endpoints>>(
-    request: Request
-  ) => Promise<MCGetListMetaResponse>;
+    /** Management API: equivalent to `PATCH /api/v1/contents/{endpoint}/{contentId}/status`.
+     * @see https://rommy-docs.pages.dev/docs/microcms/management-api/list-setstatus
+     */
+    setStatus: <Request extends MCUpdateStatusRequest<Endpoints>>(
+      request: Request
+    ) => Promise<void>;
+  };
+  object: {
+    /** Contents API: equivalent to `GET /api/v1/{endpoint}`.
+     * @see https://rommy-docs.pages.dev/docs/microcms/contents-api/object-get
+     */
+    get: <Request extends MCGetObjectRequest<Endpoints>>(
+      request: Request
+    ) => Promise<MCGetObjectResponse<Endpoints, Request>>;
 
-  /** Management API: equivalent to `GET /api/v1/contents/{endpoint}/{contentId}`.
-   * @see https://rommy-docs.pages.dev/docs/microcms/management-api/getlistitemmeta
-   */
-  getListItemMeta: <Request extends MCGetListItemMetaRequest<Endpoints>>(
-    request: Request
-  ) => Promise<MCGetListItemMetaResponse>;
+    /** Contents API: equivalent to `PATCH /api/v1/{endpoint}`.
+     * @see https://rommy-docs.pages.dev/docs/microcms/contents-api/object-update
+     */
+    update: <Request extends MCUpdateObjectRequest<Endpoints>>(
+      request: Request
+    ) => Promise<WriteResponse>;
 
-  /** Management API: equivalent to `GET /api/v1/contents/{endpoint}`.
-   * @see https://rommy-docs.pages.dev/docs/microcms/management-api/getobjectmeta
-   */
-  getObjectMeta: <Request extends MCGetObjectMetaRequest<Endpoints>>(
-    request: Request
-  ) => Promise<MCGetObjectMetaResponse>;
+    /** Management API: equivalent to `GET /api/v1/contents/{endpoint}`.
+     * @see https://rommy-docs.pages.dev/docs/microcms/management-api/object-meta
+     */
+    meta: <Request extends MCGetObjectMetaRequest<Endpoints>>(
+      request: Request
+    ) => Promise<MCGetObjectMetaResponse>;
 
-  /** Management API: equivalent to `PATCH /api/v1/contents/{endpoint}/{contentId}`.
-   * @see https://rommy-docs.pages.dev/docs/microcms/management-api/updatestatus
-   */
-  updateStatus: <Request extends MCUpdateStatusRequest<Endpoints>>(
-    request: Request
-  ) => Promise<void>;
+    /** Management API: equivalent to `PATCH /api/v1/contents/{endpoint}/{contentId}`.
+     * @see https://rommy-docs.pages.dev/docs/microcms/management-api/object-status
+     */
+    setStatus: <Request extends MCSetObjectStatusRequest<Endpoints>>(
+      request: Request
+    ) => Promise<void>;
+  };
 
   /** Management API: equivalent to `GET /api/v1/media`.
-   * @see https://rommy-docs.pages.dev/docs/microcms/management-api/getmedia
+   * @see https://rommy-docs.pages.dev/docs/microcms/management-api/media
    */
-  getMedia: <Queries extends MCGetMediaQueries>(
+  media: <Queries extends MCGetMediaQueries>(
     queries?: Queries
   ) => Promise<MCGetMediaResponse<Queries>>;
 };

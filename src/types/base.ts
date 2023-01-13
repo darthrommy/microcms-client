@@ -55,7 +55,7 @@ export type MCMeta = {
     publishTime?: string;
     stopTime?: string;
   };
-} & MCListItemBase;
+};
 
 /** microCMS image type */
 export type MCImage = {

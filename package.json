@@ -1,6 +1,6 @@
 {
   "name": "@darthrommy/microcms-client",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Unofficial microCMS client with type-safety.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -17,10 +17,7 @@
     }
   },
   "files": [
-    "package.json",
-    "README.md",
-    "dist",
-    "LICENSE"
+    "dist"
   ],
   "sideEffects": false,
   "scripts": {
@@ -39,7 +36,7 @@
   "bugs": {
     "url": "https://github.com/darthrommy/microcms-client/issues"
   },
-  "homepage": "https://github.com/darthrommy/microcms-client#readme",
+  "homepage": "https://rommy-docs.pages.dev/docs/microcms",
   "devDependencies": {
     "@rollup/plugin-typescript": "^10.0.1",
     "@types/node": "^18.11.17",

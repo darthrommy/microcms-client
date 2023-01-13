@@ -3,6 +3,7 @@ import {
   MCContentId,
   MCContentStatus,
   MCImage,
+  MCListItemBase,
   MCListResponseBase,
   MCMeta,
 } from "./base";
@@ -28,7 +29,7 @@ export type MCGetListItemMetaRequest<Endpoint extends ClientEndpoints> = {
 };
 
 /** `getListItemMeta` response type */
-export type MCGetListItemMetaResponse = MCMeta;
+export type MCGetListItemMetaResponse = MCMeta & MCListItemBase;
 
 /** `getListObjectMeta` request type */
 export type MCGetObjectMetaRequest<Endpoint extends ClientEndpoints> = {
@@ -36,7 +37,7 @@ export type MCGetObjectMetaRequest<Endpoint extends ClientEndpoints> = {
 };
 
 /** `getListObjectMeta` response type */
-export type MCGetObjectMetaResponse = MCMeta;
+export type MCGetObjectMetaResponse = MCMeta & MCContentId;
 
 /** `updateStatus` request type */
 export type MCUpdateStatusRequest<Endpoint extends ClientEndpoints> = {

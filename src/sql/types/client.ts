@@ -1,8 +1,13 @@
 import { Fetch, Method } from "../../types";
 
 export type ClientConfig = {
+  /** Your service domain
+   * @example "xxx" in "https://xxx.microcms.io"
+   */
   serviceDomain: string;
+  /** Your api key */
   apiKey: string;
+  /** Custom fetch implementation */
   customFetch?: Fetch;
 };
 

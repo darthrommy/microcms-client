@@ -16,6 +16,10 @@ export default class EndpointHandler<Endpoints extends ClientEndpoints = any> {
     if (!config.apiKey) throw new Error("apiKey is required");
   }
 
+  /**
+   * Specifies list-format endpoint name.
+   * @param endpoint - endpoint name
+   */
   list<
     EndpointName extends string & keyof Endpoints["list"],
     EndpointType extends Endpoints["list"][EndpointName]
@@ -28,6 +32,10 @@ export default class EndpointHandler<Endpoints extends ClientEndpoints = any> {
     });
   }
 
+  /**
+   * Specifies object-format endpoint name.
+   * @param endpoint - endpoint name
+   */
   object<
     EndpointName extends string & keyof Endpoints["object"],
     EndpointType extends Endpoints["object"][EndpointName]
@@ -40,6 +48,9 @@ export default class EndpointHandler<Endpoints extends ClientEndpoints = any> {
     });
   }
 
+  /**
+   * Retrieves media files from the provided `serviceDomain`.
+   */
   media(): TransformBuilder<
     never,
     { media: (MCImage & MCContentId)[] } & MCListResponseBase

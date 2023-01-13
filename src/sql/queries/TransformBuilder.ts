@@ -96,8 +96,8 @@ export default class TransformBuilder<T, Result> extends CoreBuilder<Result> {
   }
 
   /**
-   * Shorthand for setting `imageOnly` query to `true`. Only effective on `meta()`.
-   * @see https://rommy-docs.pages.dev/docs/microcms/gotchas#richeditorformat
+   * Shorthand for setting `imageOnly` query to `true`. Only effective on `media()`.
+   * @see https://rommy-docs.pages.dev/docs/microcms/gotchas#imageonly
    */
   imageOnly() {
     this.url.searchParams.append("imageOnly", "true");
@@ -105,8 +105,8 @@ export default class TransformBuilder<T, Result> extends CoreBuilder<Result> {
   }
 
   /**
-   * Shorthand for setting `status` query to `"draft"`.
-   * @see https://rommy-docs.pages.dev/docs/microcms/gotchas#richeditorformat
+   * Shorthand for setting `status` query to `"draft"`. Only effective on `list.create(request)`.
+   * @see https://rommy-docs.pages.dev/docs/microcms/gotchas#
    */
   draft() {
     this.url.searchParams.append("status", "draft");

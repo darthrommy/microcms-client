@@ -20,8 +20,11 @@ export default class ListEndpoint<
   EndpointType extends Endpoints["list"][EndpointName] = Endpoints["list"][EndpointName]
 > extends EndpointBase {
   /**
-   * Performs `GET` API of contents API.
+   * Performs `GET` *contents** API.
    * @param id - _(optional)_ Specify when getting a single item.
+   * @example
+   * get()  // will perform GET /api/v1/{endpoint}
+   * get(id)  // will perform GET /api/v1/{endpoint}/{id}
    */
   get(): QueryBuilder<"list", MCListItemBase & EndpointType>;
   get(id: string): QueryBuilder<"single", MCObjectBase & EndpointType>;
@@ -34,6 +37,13 @@ export default class ListEndpoint<
     });
   }
 
+  /**
+   * Performs `POST`/`PUT` **contents** API.
+   * @param request - configurations of API call
+   * @example
+   * { payload: EndpointType }  // will perform `POST` API
+   * { id: string; payload: EndpointType }  // will perform `PUT` API
+   */
   create(request: {
     payload: EndpointType;
   }): TransformBuilder<never, WriteResponse>;
@@ -50,6 +60,11 @@ export default class ListEndpoint<
     });
   }
 
+  /**
+   * Performs `PATCH` **contents** API.
+   * @param id - id of target item
+   * @param payload - payload of update
+   */
   update(
     id: string,
     payload: Partial<EndpointType>
@@ -63,6 +78,10 @@ export default class ListEndpoint<
     });
   }
 
+  /**
+   * Performs `DELETE` **contents** API.
+   * @param id - id of target item
+   */
   delete(id: string): NoTransformers<undefined> {
     return new NoTransformers({
       method: "DELETE",
@@ -72,6 +91,13 @@ export default class ListEndpoint<
     });
   }
 
+  /**
+   * Performs `GET` **management** API.
+   * @param id - _(optional)_ Specify when getting a single item
+   * @example
+   * meta()  // will perform GET /api/v1/contents/{endpoint}
+   * meta(id)  // will perform GET /api/v1/contents/{endpoint}/{id}
+   */
   meta<Props extends MCMeta & MCListItemBase>(): TransformBuilder<
     never,
     { contents: Props[] } & MCListResponseBase
@@ -88,6 +114,11 @@ export default class ListEndpoint<
     });
   }
 
+  /**
+   * Perform `PATCH` **management** API.
+   * @param id - id of target item
+   * @param status - status to set (`"DRAFT" | "PUBLISH"`)
+   */
   setStatus(id: string, status: Exclude<MCContentStatus, "CLOSED">) {
     return new NoTransformers({
       method: "PATCH",

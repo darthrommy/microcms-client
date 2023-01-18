@@ -1,0 +1,17 @@
+changelog:
+  exclude:
+    labels:
+      - ignore
+    authors:
+      - github-actions
+
+  categories:
+    - title: New Features 🎉
+      labels:
+        - feature
+    - title: Bug Fix 🛠️
+      labels:
+        - bug
+    - title: Misc Changes 🎨
+      labels:
+        - "*"

@@ -13,15 +13,17 @@ jobs:
     steps:
       - name: checkout code
         uses: actions/checkout@v3
-      - name: create release
-        id: create_release
-        uses: ncipollo/release-action@v1
+      - name: draft release
+        uses: octokit/request-action@v2.x
+        with:
+          route: POST /repos/:repository/releases
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag: ${{ github.event.pull_request.title }}
-          body: ${{ github.event.pull_request.body }}
-          commit: master
+          INPUT_REPOSITORY: ${{ github.repository }}
+          INPUT_TAG_NAME: ${{ github.event.pull_request.title }}
+          INPUT_TARGET_COMMITISH: master
+          INPUT_DRAFT: ${{ true }}
+          INPUT_GENERATE_RELEASE_NOTES: ${{ true }}
 
       - uses: actions/setup-node@v3
         with:

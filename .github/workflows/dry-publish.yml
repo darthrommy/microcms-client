@@ -1,0 +1,26 @@
+name: Dry Publish
+
+on:
+  - pull_request
+
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: "https://registry.npmjs.org"
+          scope: "@darthrommy"
+          always-auth: true
+      - run: npm ci
+      - run: npm publish --access public --dry-run
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  package-size:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: preactjs/compressed-size-action@v2

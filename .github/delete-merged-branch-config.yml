@@ -1,4 +1,0 @@
-exclude:
-  - master
-  - staging
-delete_closed_pr: true

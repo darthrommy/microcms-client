@@ -16,3 +16,11 @@ type NumberToTuple<
 export type DecrementNum<N extends number> = ArrayLength<
   DeleteOneItem<NumberToTuple<N>>
 >;
+
+type Primitive = string | number | boolean | symbol | undefined;
+
+export type LiteralUnion<Literal extends Base, Base extends Primitive> =
+  | Literal
+  | (Base & { _?: never });
+
+export type ArrayType<T extends any[]> = T extends (infer U)[] ? U : never;

@@ -29,6 +29,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_PR_RELEASE_BRANCH_PRODUCTION: master
           GIT_PR_RELEASE_BRANCH_STAGING: staging
-          GIT_RELEASE_LABLES: release
+          GIT_RELEASE_LABELS: release
           NPM_VERSION: v${{ steps.package-version.outputs.current-version }}
           GIT_PR_RELEASE_TEMPLATE: .git-pr-release-template
